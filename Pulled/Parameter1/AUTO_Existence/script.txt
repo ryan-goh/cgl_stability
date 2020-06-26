@@ -1,0 +1,61 @@
+##AUTO07p script to continue front solutions to the pulled inhomogeneous CGL with supercritical cubic nonlinearity
+## This script solves for fronts as two couple boundary value problems representing the two different sides of the heterogeneity, connected by continuity conditions at the right of the first domain and left of the second domain.
+## The other boundary conditions are determined by the desired asymptotic states of the periodic orbit.
+
+##Process/sequence of constant files  
+
+#1.a: continues in dummy parameter to find an initial front solution
+
+#2, 4, 3,: Each continues one of the computational parameters (i.e. not in the model) makning one of the solution componenet continuous across the two boundary value problems 
+
+#1: Continues in domain size (to L \in [-500, 500]
+
+#5: Continues with the quenching speed c free, solving for the temporal frequency
+
+
+
+##Run the following code
+
+
+
+
+source ~/auto/07p/cmds/auto.env.sh
+
+
+
+ld('het')
+cp c.het.1a c.het
+run('het')
+sv('het')
+cp c.het.2 c.het
+run('het')
+sv('het')
+cp c.het.4 c.het
+run('het')
+sv('het')
+cp c.het.3 c.het
+run('het')
+sv('het')
+cp c.het.1 c.het
+run('het')
+sv('het')
+
+cp c.het.5 c.het
+hetero_up= run('het')
+hetero_down = run('het',DS='-')
+mm = hetero_up+hetero_down
+parallel = merge(mm)
+parallel = relabel(parallel)
+
+
+
+# writing bifurcation data to file:
+parallel.writeRawFilename("parallelbif.dat")
+
+# writing solutions to file:
+for ii in range(1,290):
+	parallel(ii).writeRawFilename("parallelsol_%s.dat" % ii)
+
+
+
+
